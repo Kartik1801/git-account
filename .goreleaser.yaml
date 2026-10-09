@@ -1,0 +1,39 @@
+version: 2
+project_name: git-account
+
+before:
+  hooks:
+    # Manual pages, so `man git-account` works.
+    - go run ./tools/man ./man
+
+builds:
+  - main: ./cmd/git-account
+    binary: git-account
+    env: [CGO_ENABLED=0]
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags: ["-s -w -X main.version={{.Version}}"]
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files: [README.md, LICENSE, docs/*, man/*]
+
+nfpms:
+  - package_name: git-account
+    description: Use several Git accounts on one computer without mixing them up
+    license: MIT
+    maintainer: Kartik Dhawan
+    formats: [deb, rpm]
+    dependencies: [git, openssh-client]
+    overrides:
+      rpm:
+        dependencies: [git, openssh-clients]
+    contents:
+      - src: ./man/*.1
+        dst: /usr/share/man/man1/
+
+checksum:
+  name_template: checksums.txt

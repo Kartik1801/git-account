@@ -1,0 +1,6 @@
+/dist/
+/man/
+/git-account
+/git-account.exe
+*.test
+*.out
